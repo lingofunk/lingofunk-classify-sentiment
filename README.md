@@ -37,6 +37,30 @@ Available models:
 PYTHONPATH=. python -m lingofunk_classify_sentiment.classify naive_bayes "Hello, world!"
 ```
 
+| Metrics       |                     |
+| ------------- | ------------------- |
+| accuracy      | 0.7320675105485233. |
+| pos precision | 0.9956709956709957  |
+| pos recall    | 0.6460674157303371  |
+| pos F-measure | 0.7836456558773425  |
+| neg precision | 0.48148148148148145 |
+| neg recall    | 0.9915254237288136  |
+| neg F-measure | 0.6481994459833794  |
+
+| Most Informative Features    |                               |
+| ---------------------------- | ----------------------------- |
+| horrible = True              | neg : pos    =     53.4 : 1.0 |
+| ('food', 'ok') = True        | neg : pos    =     37.5 : 1.0 |
+| ('awful', '.') = True        | neg : pos    =     33.4 : 1.0 |
+| worst = True                 | neg : pos    =     33.0 : 1.0 |
+| ('food', 'okay') = True      | neg : pos    =     31.4 : 1.0 |
+| ('gross', '.') = True        | neg : pos    =     29.4 : 1.0 |
+| ('terrible', '.') = True     | neg : pos    =     28.6 : 1.0 |
+| ('food', 'poisoning') = True | neg : pos    =     27.3 : 1.0 |
+| poisoning = True             | neg : pos    =     27.3 : 1.0 |
+| ('mediocre', '.') = True     | neg : pos    =     27.3 : 1.0 |
+
+
 ### Utilities
 #### Extracting reviews from the Yelp dataset
 
