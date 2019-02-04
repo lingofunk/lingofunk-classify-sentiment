@@ -17,11 +17,37 @@ Installation
 
 ### Setup
 
-#### Extract reviews from the Yelp dataset
+#### Train a naive Bayes classifier
+
+Pass the business type and the number of reviews required.
+
+For instance, to train on 1000 reviews on restaurants, execute the following:
 
 ```shell
-PYTHONPATH=. python -m
+PYTHONPATH=. python -m lingofunk_classify_sentiment.model.naive_bayes.run Restaurants 1000
 ```
+
+#### Classify a random review
+
+Available models:
+
+  - `naive_bayes`: a naive Bayes classifier, based on `NaiveBayesClassifier` from `nltk`.
+
+```shell
+PYTHONPATH=. python -m lingofunk_classify_sentiment.classify naive_bayes "Hello, world!"
+```
+
+### Utilities
+#### Extracting reviews from the Yelp dataset
+
+Pass the business type and the number of reviews required.
+
+For instance, to generate 1000 reviews on restaurants, execute the following:
+
+```shell
+PYTHONPATH=. python -m lingofunk_classify_sentiment.model.extract_reviews Restaurants 1000
+```
+
 
 Compatibility
 -------------

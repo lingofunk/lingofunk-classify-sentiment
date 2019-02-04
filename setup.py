@@ -1,9 +1,12 @@
 import io
 import os
 import re
+import nltk
 
 from setuptools import find_packages
 from setuptools import setup
+
+nltk.download("stopwords")
 
 
 def read(filename):

@@ -1,13 +1,11 @@
 import itertools
 import re
 
-import nltk
 from nltk.collocations import BigramCollocationFinder
 from nltk.corpus import stopwords
 from nltk.metrics import BigramAssocMeasures
 from nltk.tokenize import word_tokenize
 
-nltk.download("stopwords")
 
 
 def tokenize(text):
