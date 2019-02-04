@@ -20,7 +20,9 @@ class Classifier:
             ROOT, config["models"][model_name]["preprocessor"]
         )
 
-        self.model = joblib.load(weights_path)
+        print("Loading model...")
+        self.model = joblib.load(weights_path, mmap_mode="r")
+        print("Loading the preprocessing function...")
         self.preprocess = joblib.load(preprocessor_path)
 
     def classify(self, text):

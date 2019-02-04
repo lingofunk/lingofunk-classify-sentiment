@@ -32,6 +32,7 @@ def train(pos_samples, neg_samples):
         classifier = joblib.load(model_path).train(train_samples)
     else:
         classifier = nltk.NaiveBayesClassifier.train(train_samples)
+        joblib.dump(classifier, model_path, compress=0)
 
 
     accuracy = nltk.classify.util.accuracy(classifier, test_samples)

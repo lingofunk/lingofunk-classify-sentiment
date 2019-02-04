@@ -4,6 +4,7 @@ import sys
 
 import joblib
 from lingofunk_classify_sentiment.model.utils import get_root, load_samples
+from lingofunk_classify_sentiment.model.extract_reviews import save_reviews
 
 from .preprocess import remove_stopwords_and_include_bigrams
 from .train import train
@@ -25,7 +26,7 @@ def main(argv):
 
     try:
         (pos_words, neg_words) = load_samples(
-            category, quantity, remove_stopwords_and_include_bigrams
+            category, quantity, remove_stopwords_and_include_bigrams, save_reviews
         )
     except Exception:
         print("The data for this category and quantity are not found.")
@@ -34,7 +35,7 @@ def main(argv):
     preprocessor_path = os.path.join(
         ROOT, config["models"]["naive_bayes"]["preprocessor"]
     )
-    joblib.dump(remove_stopwords_and_include_bigrams, preprocessor_path, compress=9)
+    joblib.dump(remove_stopwords_and_include_bigrams, preprocessor_path, compress=0)
 
     print(f"Category: {category}")
     (accuracy, classifier, train_set, test_set) = train(pos_words, neg_words)

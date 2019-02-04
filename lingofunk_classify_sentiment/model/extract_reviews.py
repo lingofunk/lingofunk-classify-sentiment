@@ -5,7 +5,7 @@ import os
 import sys
 from string import Template
 
-from .utils import get_root
+from lingofunk_classify_sentiment.model.utils import get_root
 
 ROOT = get_root()
 CONFIG_PATH = os.path.join(ROOT, "config.json")

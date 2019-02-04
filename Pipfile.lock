@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2c7c5dcbea6703c2d08078f5aaa16b816d674fdd82a856234e13071fc00c84ab"
+            "sha256": "c618809b8b4165de21231403b18ab3aa31c5f51e2a24ccfa4af6847e7935b979"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -215,6 +215,13 @@
                 "sha256:d7cc528d76e76342423ca640335bd3633420dc1366f258cb31d05e865ef5ca1f"
             ],
             "version": "==0.6.0"
+        },
+        "pycallgraph": {
+            "hashes": [
+                "sha256:b1262b0f9831da889c6e9a9a82a22267df497013cd2f5b36c39359a607c91e71"
+            ],
+            "index": "pypi",
+            "version": "==1.0.1"
         },
         "pygments": {
             "hashes": [
