@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from string import Template
 
+
 def get_root():
     """Return project root folder"""
     return Path(__file__).parent.parent
@@ -24,10 +25,8 @@ def load_samples(category, quantity, process_text, save=False):
     pos_reviews_fn = sample_template_filename.substitute(
         category=category.lower(), quantity=quantity, label="pos"
     )
-    neg_reviews_fn = (
-        sample_template_filename.substitute(
-            category=category.lower(), quantity=quantity, label="neg"
-        ),
+    neg_reviews_fn = sample_template_filename.substitute(
+        category=category.lower(), quantity=quantity, label="neg"
     )
 
     bothExist = os.path.isfile(pos_reviews_fn) and os.path.isfile(neg_reviews_fn)

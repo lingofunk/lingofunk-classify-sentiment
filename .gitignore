@@ -135,7 +135,7 @@ dmypy.json
 
 # datasets
 
-*/assets/data/*.csv
-*/assets/data/*.json
+lingofunk_classify_sentiment/assets/data/*.csv
+lingofunk_classify_sentiment/assets/data/*.json
 
 # End of https://www.gitignore.io/api/python,visualstudiocode
