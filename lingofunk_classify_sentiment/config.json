@@ -1,0 +1,19 @@
+{
+  "models": {
+    "naive_bayes": {
+      "weights": "assets/model/naive_bayes/weights.joblib",
+      "preprocessor": "assets/model/naive_bayes/preprocess.joblib"
+    }
+  },
+  "datasets": {
+    "yelp": {
+      "ids": "assets/data/business.json",
+      "reviews": "assets/data/review.json",
+      "sample_format": "assets/data/yelp_${category}_reviews_${quantity}_${label}.json"
+    },
+    "yelp_restaurants": {
+      "ids": "assets/data/restaurants.csv",
+      "reviews": "assets/data/restaurant_reviews.csv"
+    }
+  }
+}

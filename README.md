@@ -15,6 +15,14 @@ Installation
 
 ### Requirements
 
+### Setup
+
+#### Extract reviews from the Yelp dataset
+
+```shell
+PYTHONPATH=. python -m
+```
+
 Compatibility
 -------------
 
