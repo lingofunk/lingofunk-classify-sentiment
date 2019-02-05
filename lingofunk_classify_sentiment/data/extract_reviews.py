@@ -5,20 +5,12 @@ import os
 import sys
 from string import Template
 
-from lingofunk_classify_sentiment.data.load import get_root
-
-ROOT = get_root()
-CONFIG_PATH = os.path.join(ROOT, "config.json")
-
-with open(CONFIG_PATH) as f:
-    config = json.load(f)
+from lingofunk_classify_sentiment.config import config, fetch
 
 
-business_data_filename = os.path.join(ROOT, config["datasets"]["yelp"]["ids"])
-reviews_data_filename = os.path.join(ROOT, config["datasets"]["yelp"]["reviews"])
-sample_template_filename = Template(
-    os.path.join(ROOT, config["datasets"]["yelp"]["sample_format"])
-)
+business_data_filename = fetch(config["datasets"]["yelp"]["ids"])
+reviews_data_filename = fetch(config["datasets"]["yelp"]["reviews"])
+sample_template_filename = Template(fetch(config["datasets"]["yelp"]["sample_format"]))
 
 
 def get_business_ids(category):

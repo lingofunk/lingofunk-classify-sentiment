@@ -1,24 +1,11 @@
 import json
 import os
-from pathlib import Path
 from string import Template
 
-
-def get_root():
-    """Return project root folder"""
-    return Path(__file__).parent.parent
+from lingofunk_classify_sentiment.config import config, fetch
 
 
-ROOT = get_root()
-CONFIG_PATH = os.path.join(ROOT, "config.json")
-
-with open(CONFIG_PATH) as f:
-    config = json.load(f)
-
-
-sample_template_filename = Template(
-    os.path.join(ROOT, config["datasets"]["yelp"]["sample_format"])
-)
+sample_template_filename = Template(fetch(config["datasets"]["yelp"]["sample_format"]))
 
 
 def load_samples(category, quantity, process_text, save=False):

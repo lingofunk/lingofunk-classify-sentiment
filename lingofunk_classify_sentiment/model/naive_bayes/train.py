@@ -10,17 +10,11 @@ from nltk.metrics import scores
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split
 
-from lingofunk_classify_sentiment.data.load import get_root
-
-ROOT = get_root()
-CONFIG_PATH = os.path.join(ROOT, "config.json")
-
-with open(CONFIG_PATH) as f:
-    config = json.load(f)
+from lingofunk_classify_sentiment.config import config, fetch
 
 
 def train(pos_samples, neg_samples):
-    model_path = os.path.join(ROOT, config["models"]["naive_bayes"]["weights"])
+    model_path = fetch(config["models"]["naive_bayes"]["weights"])
 
     samples = np.array(pos_samples + neg_samples)
 
@@ -33,7 +27,6 @@ def train(pos_samples, neg_samples):
     else:
         classifier = nltk.NaiveBayesClassifier.train(train_samples)
         joblib.dump(classifier, model_path, compress=0)
-
 
     accuracy = nltk.classify.util.accuracy(classifier, test_samples)
     print(f"Finished training. The accuracy is {accuracy}.")

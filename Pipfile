@@ -11,6 +11,8 @@ pycallgraph = "*"
 nltk = "*"
 scikit-learn = "*"
 numpy = "*"
+keras = "*"
+requests = "*"
 
 [requires]
 python_version = "3.6"

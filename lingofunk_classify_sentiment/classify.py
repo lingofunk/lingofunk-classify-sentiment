@@ -1,24 +1,14 @@
-import json
-import os
 import sys
 
 import joblib
-from lingofunk_classify_sentiment.data.load import get_root
-
-ROOT = get_root()
-CONFIG_PATH = os.path.join(ROOT, "config.json")
-
-with open(CONFIG_PATH) as f:
-    config = json.load(f)
+from lingofunk_classify_sentiment.config import config, fetch
 
 
 class Classifier:
     def __init__(self, model_name):
         self.model_name = model_name
-        weights_path = os.path.join(ROOT, config["models"][model_name]["weights"])
-        preprocessor_path = os.path.join(
-            ROOT, config["models"][model_name]["preprocessor"]
-        )
+        weights_path = fetch(config["models"][model_name]["weights"])
+        preprocessor_path = fetch(config["models"][model_name]["preprocessor"])
 
         print("Loading model...")
         self.model = joblib.load(weights_path, mmap_mode="r")

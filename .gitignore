@@ -137,5 +137,6 @@ dmypy.json
 
 lingofunk_classify_sentiment/assets/data/*.csv
 lingofunk_classify_sentiment/assets/data/*.json
+lingofunk_classify_sentiment/assets/embedding/*
 
 # End of https://www.gitignore.io/api/python,visualstudiocode

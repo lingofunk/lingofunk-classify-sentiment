@@ -3,17 +3,12 @@ import os
 import sys
 
 import joblib
-from lingofunk_classify_sentiment.data.load import get_root, load_samples
+from lingofunk_classify_sentiment.config import config, fetch
+from lingofunk_classify_sentiment.data.load import load_samples
 from lingofunk_classify_sentiment.data.extract_reviews import save_reviews
 
 from .preprocess import remove_stopwords_and_include_bigrams
 from .train import train
-
-ROOT = get_root()
-CONFIG_PATH = os.path.join(ROOT, "config.json")
-
-with open(CONFIG_PATH) as f:
-    config = json.load(f)
 
 
 def main(argv):
@@ -32,9 +27,7 @@ def main(argv):
         print("The data for this category and quantity are not found.")
         sys.exit(2)
 
-    preprocessor_path = os.path.join(
-        ROOT, config["models"]["naive_bayes"]["preprocessor"]
-    )
+    preprocessor_path = fetch(config["models"]["naive_bayes"]["preprocessor"])
     joblib.dump(remove_stopwords_and_include_bigrams, preprocessor_path, compress=0)
 
     print(f"Category: {category}")

@@ -3,6 +3,10 @@
     "naive_bayes": {
       "weights": "assets/model/naive_bayes/weights.joblib",
       "preprocessor": "assets/model/naive_bayes/preprocess.joblib"
+    },
+    "hnatt": {
+      "weights": "",
+      "preprocessor": ""
     }
   },
   "datasets": {
@@ -14,6 +18,12 @@
     "yelp_restaurants": {
       "ids": "assets/data/restaurants.csv",
       "reviews": "assets/data/restaurant_reviews.csv"
+    }
+  },
+  "embeddings": {
+    "glove-840B-300d": {
+      "basepath": "assets/embedding/glove.840B.300d",
+      "url": "http://nlp.stanford.edu/data/glove.840B.300d.zip"
     }
   }
 }
