@@ -32,13 +32,9 @@ def main(argv):
         if not os.path.isfile(embeddings_path):
             download_embedding(embeddings_name)
 
-    try:
-        (train_X, train_y), (test_X, test_y) = load_balanced_train_and_test_dataframes(
+    (train_X, train_y), (test_X, test_y) = load_balanced_train_and_test_dataframes(
             category, quantity, normalize
         )
-    except Exception:
-        print("The data for this category and quantity have not been found.")
-        sys.exit(2)
 
     # initialize HNATT
     h = HNATT()

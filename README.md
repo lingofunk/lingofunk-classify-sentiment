@@ -40,13 +40,7 @@ PYTHONPATH=. python -m lingofunk_classify_sentiment.model.naive_bayes.run Restau
 
 #### Train a hierarchical network with attention architecture (HNATT)
 
-First, download the glove embedding:
-
-```shell
-PYTHONPATH=. python -m lingofunk_classify_sentiment.data.download_data --name 'glove-840B-300d'
-```
-
-Then, pick the business type, the number of reviews required and one of the embedding files listed in config.json.
+Pick the business type, the number of reviews required and one of the embedding files listed in config.json (for the naive embedding, leave the third argument blank).
 
 To train on 1000 reviews on restaurants, execute the following:
 
