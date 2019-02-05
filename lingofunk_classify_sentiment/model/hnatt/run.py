@@ -23,15 +23,14 @@ def main(argv):
     category = argv[0]
     quantity = int(argv[1])
 
-    embedding_path = None
+    embeddings_path = None
     if len(argv) == 3:
-        embedding_name = argv[2]
+        embeddings_name = argv[2]
         embeddings_path = fetch(
-            f'{config["embeddings"][embedding_name]["basepath"]}.txt'
+            f'{config["embeddings"][embeddings_name]["basepath"]}.txt'
         )
-
         if not os.path.isfile(embeddings_path):
-            download_embedding(embedding_name)
+            download_embedding(embeddings_name)
 
     try:
         (train_X, train_y), (test_X, test_y) = load_balanced_train_and_test_dataframes(
@@ -43,7 +42,7 @@ def main(argv):
 
     # initialize HNATT
     h = HNATT()
-    h.train(train_X, train_y, batch_size=16, epochs=16, embeddings_path=embedding_path)
+    h.train(train_X, train_y, batch_size=16, epochs=16, embeddings_path=embeddings_path)
 
     h.load_weights()
 

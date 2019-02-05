@@ -46,12 +46,12 @@ First, download the glove embedding:
 PYTHONPATH=. python -m lingofunk_classify_sentiment.data.download_data --name 'glove-840B-300d'
 ```
 
-Then, pick the business type and the number of reviews required.
+Then, pick the business type, the number of reviews required and one of the embedding files listed in config.json.
 
 To train on 1000 reviews on restaurants, execute the following:
 
 ```shell
-PYTHONPATH=. python -m lingofunk_classify_sentiment.model.hnatt.run Restaurants 1000
+PYTHONPATH=. python -m lingofunk_classify_sentiment.model.hnatt.run Restaurants 1000 glove-840B-300d
 ```
 
 #### Classify a random review
