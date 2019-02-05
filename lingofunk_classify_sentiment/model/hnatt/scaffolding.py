@@ -20,10 +20,10 @@ from lingofunk_classify_sentiment.data.load import load_glove_embedding
 from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
 
 # Uncomment below for debugging
-from tensorflow.python import debug as tf_debug
-sess = K.get_session()
-sess = tf_debug.LocalCLIDebugWrapperSession(sess)
-K.set_session(sess)
+# from tensorflow.python import debug as tf_debug
+# sess = K.get_session()
+# sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+# K.set_session(sess)
 
 
 class Attention(Layer):
@@ -103,7 +103,10 @@ class HNATT:
             )
         )(embedded_word_seq)
         dense_transform_w = Dense(
-            100, activation="relu", name="dense_transform_w", kernel_regularizer=l2_reg
+            embedding_dim,
+            activation="relu",
+            name="dense_transform_w",
+            kernel_regularizer=l2_reg,
         )(word_encoder)
         attention_weighted_sentence = Model(
             sentence_in,
@@ -120,10 +123,17 @@ class HNATT:
             texts_in
         )
         sentence_encoder = Bidirectional(
-            GRU(50, return_sequences=True, kernel_regularizer=l2_reg)
+            GRU(
+                self.MAX_SENTENCE_LENGTH,
+                return_sequences=True,
+                kernel_regularizer=l2_reg,
+            )
         )(attention_weighted_sentences)
         dense_transform_s = Dense(
-            100, activation="relu", name="dense_transform_s", kernel_regularizer=l2_reg
+            embedding_dim,
+            activation="relu",
+            name="dense_transform_s",
+            kernel_regularizer=l2_reg,
         )(sentence_encoder)
         attention_weighted_text = Attention(
             name="sentence_attention", regularizer=l2_reg
@@ -234,7 +244,7 @@ class HNATT:
             # )
             LambdaCallback(
                 on_epoch_end=lambda epoch, logs: self._save_tokenizer_on_epoch_end(
-                    fetch(config["models"]["hnatt"]["tokenizer"])
+                    fetch(config["models"]["hnatt"]["tokenizer"]), epoch
                 )
             ),
         ]
