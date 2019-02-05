@@ -38,6 +38,22 @@ For instance, to train on 1000 reviews on restaurants, execute the following:
 PYTHONPATH=. python -m lingofunk_classify_sentiment.model.naive_bayes.run Restaurants 1000
 ```
 
+#### Train a hierarchical network with attention architecture (HNATT)
+
+First, download the glove embedding:
+
+```shell
+PYTHONPATH=. python -m lingofunk_classify_sentiment.data.download_data --name 'glove-840B-300d'
+```
+
+Then, pick the business type and the number of reviews required.
+
+To train on 1000 reviews on restaurants, execute the following:
+
+```shell
+PYTHONPATH=. python -m lingofunk_classify_sentiment.model.hnatt.run Restaurants 1000
+```
+
 #### Classify a random review
 
 Available models:
@@ -71,6 +87,11 @@ PYTHONPATH=. python -m lingofunk_classify_sentiment.classify naive_bayes "Hello,
 | poisoning = True             | neg : pos    =     27.3 : 1.0 |
 | ('mediocre', '.') = True     | neg : pos    =     27.3 : 1.0 |
 
+  - `hnatt`: a hierarchical network with attention architecture naive Bayes classifier, based on minqi's [implementation](https://github.com/minqi/hnatt).
+
+```shell
+PYTHONPATH=. python -m lingofunk_classify_sentiment.classify hnatt "Hello, world!"
+```
 
 ### Utilities
 #### Extracting reviews from the Yelp dataset

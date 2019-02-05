@@ -5,8 +5,9 @@
       "preprocessor": "assets/model/naive_bayes/preprocess.joblib"
     },
     "hnatt": {
-      "weights": "",
-      "preprocessor": ""
+      "weights": "assets/model/hnatt/weights.h5",
+      "preprocessor": "assets/model/hnatt/preprocess.joblib",
+      "tokenizer": "assets/model/hnatt/tokenize.pkl"
     }
   },
   "datasets": {

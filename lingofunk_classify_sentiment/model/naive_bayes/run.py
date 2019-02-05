@@ -4,11 +4,12 @@ import sys
 
 import joblib
 from lingofunk_classify_sentiment.config import config, fetch
-from lingofunk_classify_sentiment.data.load import load_samples
 from lingofunk_classify_sentiment.data.extract_reviews import save_reviews
-
-from .preprocess import remove_stopwords_and_include_bigrams
-from .train import train
+from lingofunk_classify_sentiment.data.load import load_samples
+from lingofunk_classify_sentiment.model.naive_bayes.preprocess import (
+    remove_stopwords_and_include_bigrams
+)
+from lingofunk_classify_sentiment.model.naive_bayes.train import train
 
 
 def main(argv):
@@ -24,7 +25,7 @@ def main(argv):
             category, quantity, remove_stopwords_and_include_bigrams, save_reviews
         )
     except Exception:
-        print("The data for this category and quantity are not found.")
+        print("The data for this category and quantity have not been found.")
         sys.exit(2)
 
     preprocessor_path = fetch(config["models"]["naive_bayes"]["preprocessor"])
