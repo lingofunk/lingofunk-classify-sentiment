@@ -14,8 +14,19 @@ Installation
 ------------
 
 ### Requirements
+- [pyenv](https://github.com/pyenv/pyenv)
+- pipenv
 
+```shell
+pip install pipenv
+```
 ### Setup
+
+```shell
+pyenv local $(cat .python-version)
+pipenv install --dev
+pipenv shell
+```
 
 #### Train a naive Bayes classifier
 
