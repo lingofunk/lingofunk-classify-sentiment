@@ -33,8 +33,8 @@ def main(argv):
             download_embedding(embeddings_name)
 
     (train_X, train_y), (test_X, test_y) = load_balanced_train_and_test_dataframes(
-            category, quantity, normalize
-        )
+        category, quantity, normalize, save_reviews
+    )
 
     # initialize HNATT
     h = HNATT()

@@ -65,7 +65,7 @@ def get_text_and_sentiment(filename, preprocess):
 
 
 def load_balanced_train_and_test_dataframes(
-    category, quantity, preprocess, save=False, train_ratio=0.8
+    category, quantity, preprocess, save=None, train_ratio=0.8
 ):
     print("Loading Yelp reviews...")
     pos_reviews_fn = sample_template_filename.substitute(
