@@ -10,7 +10,7 @@ from nltk.metrics import scores
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split
 
-from lingofunk_classify_sentiment.model.utils import get_root
+from lingofunk_classify_sentiment.data.load import get_root
 
 ROOT = get_root()
 CONFIG_PATH = os.path.join(ROOT, "config.json")

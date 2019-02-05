@@ -3,8 +3,8 @@ import os
 import sys
 
 import joblib
-from lingofunk_classify_sentiment.model.utils import get_root, load_samples
-from lingofunk_classify_sentiment.model.extract_reviews import save_reviews
+from lingofunk_classify_sentiment.data.load import get_root, load_samples
+from lingofunk_classify_sentiment.data.extract_reviews import save_reviews
 
 from .preprocess import remove_stopwords_and_include_bigrams
 from .train import train

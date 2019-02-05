@@ -69,7 +69,7 @@ Pass the business type and the number of reviews required.
 For instance, to generate 1000 reviews on restaurants, execute the following:
 
 ```shell
-PYTHONPATH=. python -m lingofunk_classify_sentiment.model.extract_reviews Restaurants 1000
+PYTHONPATH=. python -m lingofunk_classify_sentiment.data.extract_reviews Restaurants 1000
 ```
 
 
