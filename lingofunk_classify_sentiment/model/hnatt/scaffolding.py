@@ -151,9 +151,9 @@ class HNATT:
 
         return model
 
-    def load_weights(self):
+    def load_weights(self, weights_path=fetch(config["models"]["hnatt"]["weights"])):
         with CustomObjectScope({"Attention": Attention}):
-            self.model = load_model(fetch(config["models"]["hnatt"]["weights"]))
+            self.model = load_model(weights_path)
             self.word_attention_model = self.model.get_layer("time_distributed_1").layer
             tokenizer_path = fetch(config["models"]["hnatt"]["tokenizer"])
             tokenizer_state = pickle.load(open(tokenizer_path, "rb"))
@@ -278,6 +278,13 @@ class HNATT:
     def predict(self, x):
         encoded_x = self._encode_texts(x)
         return self.model.predict(encoded_x)
+
+    def classify(self, normalised_text):
+        preds = self.predict([normalised_text])[0]
+        class_type = np.argmax(preds)
+        if class_type == 0:
+            return "neg"
+        return "pos"
 
     def activation_maps(self, text, websafe=False):
         normalized_text = normalize(text)

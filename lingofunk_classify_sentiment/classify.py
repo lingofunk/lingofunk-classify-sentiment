@@ -1,7 +1,13 @@
+import os
 import sys
 
+import numpy as np
+
 import joblib
+from keras.models import load_model
+from keras.utils import CustomObjectScope
 from lingofunk_classify_sentiment.config import config, fetch
+from lingofunk_classify_sentiment.model.hnatt.scaffolding import HNATT
 
 
 class Classifier:
@@ -11,7 +17,16 @@ class Classifier:
         preprocessor_path = fetch(config["models"][model_name]["preprocessor"])
 
         print("Loading model...")
-        self.model = joblib.load(weights_path, mmap_mode="r")
+        extension = os.path.splitext(weights_path)[-1].lower()
+        if extension == ".joblib":
+            self.model = joblib.load(weights_path, mmap_mode="r")
+        elif extension in (".h5", ".hdf5"):
+            if model_name == "hnatt":
+                h = HNATT()
+                h.load_weights(weights_path)
+                self.model = h
+            else:
+                self.model = load_model(weights_path)
         print("Loading the preprocessing function...")
         self.preprocess = joblib.load(preprocessor_path)
 
