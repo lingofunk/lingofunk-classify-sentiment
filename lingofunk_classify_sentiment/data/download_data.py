@@ -20,8 +20,12 @@ def download_embedding(embedding):
     glove_zip_path = f"{glove_basepath}.zip"
     glove_unzip_path = f"{glove_basepath}.txt"
 
-    glove_url = settings["url"]
+    embedding_dirs = map(os.path.dirname, [glove_zip_path, glove_unzip_path])
+    for embedding_dir in embedding_dirs:
+        if not os.path.exists(embedding_dir):
+            os.makedirs(embedding_dir)
 
+    glove_url = settings["url"]
     # Download the GloVe data if applicable
     if os.path.isfile(glove_zip_path):
         logger.info("GloVe data already exists, skipping download.")
