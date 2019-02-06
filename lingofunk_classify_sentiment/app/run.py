@@ -5,7 +5,6 @@ from flask import Flask, Response, jsonify, render_template, request
 from lingofunk_classify_sentiment.classify import Classifier
 from lingofunk_classify_sentiment.config import config, fetch
 
-
 class Server:
     def __init__(self, app: Flask, classifier: Classifier, port: int):
         self._app = app
@@ -13,14 +12,15 @@ class Server:
         self._classifier = classifier
 
         # routes
-        app.route("/activations")(self.activations)
+        app.route("/activations", methods=["GET", "POST"])(self.activations)
 
     def activations(self):
         """
         Receive a text and return the activation map
         """
-        if request.method == "GET":
-            text = request.args.get("text", "")
+        if request.method == "POST":
+            text = request.form["review"]
+            print(f"Review: {text}")
             if len(text.strip()) == 0:
                 return Response(status=400)
             processed_text = self._classifier.preprocess(text)
@@ -36,7 +36,8 @@ class Server:
             return Response(status=501)
 
     def serve(self):
-        self._app.run(host='0.0.0.0', port=self._port, debug=True, threaded=True)
+        self._app.run(host="0.0.0.0", port=self._port, debug=True, threaded=True)
+
 
 def load_args():
     parser = argparse.ArgumentParser()
