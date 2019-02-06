@@ -1,9 +1,16 @@
 import argparse
+import logging
+import sys
 
 from flask import Flask, Response, jsonify, render_template, request
 
 from lingofunk_classify_sentiment.classify import Classifier
 from lingofunk_classify_sentiment.config import config, fetch
+
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 class Server:
     def __init__(self, app: Flask, classifier: Classifier, port: int):
@@ -19,8 +26,9 @@ class Server:
         Receive a text and return the activation map
         """
         if request.method == "POST":
-            text = request.form["review"]
-            print(f"Review: {text}")
+            logger.debug(request.get_json())
+            data = request.get_json()
+            text = data.get("text", "")
             if len(text.strip()) == 0:
                 return Response(status=400)
             processed_text = self._classifier.preprocess(text)
