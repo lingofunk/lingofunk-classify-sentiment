@@ -32,6 +32,9 @@ def main(argv):
         if not os.path.isfile(embeddings_path):
             download_embedding(embeddings_name)
 
+    preprocessor_path = fetch(config["models"]["hnatt"]["preprocessor"])
+    joblib.dump(normalize, preprocessor_path, compress=0)
+
     (train_X, train_y), (test_X, test_y) = load_balanced_train_and_test_dataframes(
         category, quantity, normalize, save_reviews
     )
@@ -46,9 +49,6 @@ def main(argv):
         "they have some pretty interesting things here. i will definitely go back again."
     )
     print(activation_maps)
-
-    preprocessor_path = fetch(config["models"]["hnatt"]["preprocessor"])
-    joblib.dump(normalize, preprocessor_path, compress=0)
 
 
 if __name__ == "__main__":
