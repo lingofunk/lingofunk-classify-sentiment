@@ -16,9 +16,6 @@ class Server:
         app.route("/")(self.index)
         app.route("/activations")(self.activations)
 
-    def index(self):
-        return render_template("index.html")
-
     def activations(self):
         """
         Receive a text and return the activation map
