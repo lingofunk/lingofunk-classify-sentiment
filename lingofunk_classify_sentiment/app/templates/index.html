@@ -1,234 +1,184 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-	<header>
-  	<meta charset="utf-8">
-		<title>HNATT demo</title>
-		<style>
-			body {
-				font-family: 'HelveticaNeue', 'Helvetica', 'Arial', sans-serif;
-				font-size: 18px;
-				margin: 0;
-				padding: 0;
-			}
+<header>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Review Sentiment</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	 crossorigin="anonymous" />
 
-			ul {
-				list-style-type: none;
-				padding: 0;
-				margin: 0;
-			}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+	 crossorigin="anonymous" />
+	<link rel="stylesheet" href="https://unpkg.com/normalize.css" />
+	<style>
+		.activation-map {
+        flex: 1 1;
+        padding: 8px;
+        padding-top: 32px;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
 
-			.container {
-				display: flex;
-				align-items: center;
-				position: relative;
-				flex-direction: column;
-				justify-content: center;
-				height: 100vh;
-				min-height: 640px;
-			}
+      #sentence-list {
+        padding-left: 0;
+      }
 
-			.top-box, .bottom-box {
-				display: flex;
-				flex: 1 1;
-				height: 100%;
-				width: 100%;
-			}
-			.bottom-box {
-				border-top: 1px solid #eaeaea;
-			}
-			#text-input {
-				width: 100%;
-				height: 100%;
-				font-size: 18px;
-				outline: none;
-				border: none;
-				padding: 8px;
-				padding-bottom: 32px;
-				resize: none;
-				box-sizing: border-box;
-			}
+      #sentence-list li {
+        display: flex;
+        align-items: center;
+      }
 
-			.submit-btn {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				position: absolute;
-				text-align: center;
-				background: black;
-				color: white;
-				padding: 8px;
-				font-size: 18px;
-				height: 48px;
-				width: 128px;
-				box-sizing: border-box;
-				border-radius: 120px;
-				transition: all 0.2s ease-out;
-			}
-			.submit-btn:hover {
-				background: #777;
-				/*color: black;*/
-				cursor: pointer;
-			}
+      .sentence {
+        padding-left: 32px;
+      }
 
-			.activation-map {
-				flex: 1 1;
-				padding: 8px;
-				padding-top: 32px;
-    		max-width: 100%;
-    		box-sizing: border-box;
-			}
+      .sentence-label {
+        width: 32px;
+        height: 22px;
+        display: inline-block;
+      }
 
-			#sentence-list li {
-				display: flex;
-				align-items: center;
-			}
+      .words-container {
+        width: 100%;
+      }
 
-			.sentence {
-				padding-left: 32px;
-			}
+      .word {
+        display: inline-block;
+        padding: 0 4px;
+      }
 
-			.sentence-label {
-				width: 32px;
-				height: 22px;
-				display: inline-block;
-			}
+      #prediction-container {
+        margin-top: 8px;
+        color: #555;
+      }
+    </style>
+</header>
 
-			.words-container {
-				width: 100%;
-			}
-
-			.word {
-				display: inline-block;
-				padding: 0 4px;
-			}
-
-			#prediction-container {
-				margin-top: 8px;
-				color: #555;
-			}
-		</style>
-	</header>	
-
-	<body>
-		<div class='container'>
-			<div class='top-box'>
-			<textarea id='text-input'
-				placeholder='Enter review text.'>they have some pretty interesting things here. i will definitely go back again.</textarea>
-			</div>
-			<div class='submit-btn' onclick='onClickSubmit()'>Run</div>
-			<div class='bottom-box'>
-				<div class='activation-map' id='activation-map'>
-					<ul id='sentence-list'></ul>
-				</div>
-			</div>	
+<body>
+	<div class="container">
+		<h2 align="center">Review Sentiment Meter</h2>
+		<div class="form-group">
+			<label for="Review">Review:</label>
+			<textarea class="form-control" id="review" name="comment" rows="5" placeholder="Enter your review.">Went in for a lunch. Steak sandwich was delicious, and the Caesar salad had an absolutely delicious dressing, with a perfect amount of dressing, and distributed perfectly across each leaf. I know I'm going on about the salad... </textarea>
+			<br />
 		</div>
-		<footer>
-			<script>
-				let xhttp = undefined;
-				if (window.XMLHttpRequest) {
-				    // code for modern browsers
-				    xhttp = new XMLHttpRequest();
-				 } else {
-				    // code for old IE browsers
-				    xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-				}
+		<button type="submit" class="btn btn-success" onclick="onClickSubmit()">
+			Submit
+		</button>
+		<div class="activation-map" id="activation-map">
+			<ul id="sentence-list"></ul>
+		</div>
+	</div>
+	<footer>
+		<script>
+			let xhttp = undefined;
+			if (window.XMLHttpRequest) {
+				// code for modern browsers
+				xhttp = new XMLHttpRequest();
+			} else {
+				// code for old IE browsers
+				xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
 
-				let requestActivationMap = function(text, callback) {
-					xhttp.onreadystatechange = function() {
-					    if (this.readyState == 4 && this.status == 200) {
-					    	const data = JSON.parse(this.responseText);
-					      callback(data);
-					    }
-					};
-					xhttp.open("GET", "activations?text=" + text, true);
-					xhttp.send();
-				}
-
-				let onClickSubmit = function(event) {
-					let text = document.getElementById("text-input").value;
-					requestActivationMap(text, renderActivationMap);
-				}
-
-				let getSentenceColorForActivation = function(a) {
-					return `rgba(0, 0, 255, ${a})`;
-				}
-
-				let getWordColorForActivation = function(a) {
-					return `rgba(255, 0, 0, ${a})`;
-				}
-
-				let createSentenceElement = function(sa, words, originalWords) {
-					let sentenceElement = document.createElement("li");
-					sentenceElement.className	 = 'sentence'; 
-					sentenceElement.style.backgroundColor = getSentenceColorForActivation(sa);
-
-					let wordsContainer = document.createElement('div');
-					wordsContainer.className = 'words-container';
-					wordsContainer.style.backgroundColor = 'white';
-					let s_weight = Math.sqrt(sa);
-					for (let i = 0; i < words.length; i++) {
-						let a = words[i][1];
-						let w = originalWords[i]
-						wordsContainer.appendChild(createWordElement(w, a, s_weight));
+			let requestActivationMap = function (text, callback) {
+				xhttp.onreadystatechange = function () {
+					if (this.readyState == 4 && this.status == 200) {
+						const data = JSON.parse(this.responseText);
+						callback(data);
 					}
-					wordsContainer.appendChild(createWordElement('.', 0, sa))
-					sentenceElement.appendChild(wordsContainer);
+				};
+				xhttp.open("GET", "activations?text=" + text, true);
+				xhttp.send();
+			};
 
-					return sentenceElement;
+			let onClickSubmit = function (event) {
+				let text = document.getElementById("review").value;
+				requestActivationMap(text, renderActivationMap);
+			};
+
+			let getSentenceColorForActivation = function (a) {
+				return `rgba(0, 0, 255, ${a})`;
+			};
+
+			let getWordColorForActivation = function (a) {
+				return `rgba(255, 0, 0, ${a})`;
+			};
+
+			let createSentenceElement = function (sa, words, originalWords) {
+				let sentenceElement = document.createElement("li");
+				sentenceElement.className = "sentence";
+				sentenceElement.style.backgroundColor = getSentenceColorForActivation(
+					sa
+				);
+
+				let wordsContainer = document.createElement("div");
+				wordsContainer.className = "words-container";
+				wordsContainer.style.backgroundColor = "white";
+				let s_weight = Math.sqrt(sa);
+				for (let i = 0; i < words.length; i++) {
+					let a = words[i][1];
+					let w = originalWords[i];
+					wordsContainer.appendChild(createWordElement(w, a, s_weight));
 				}
+				wordsContainer.appendChild(createWordElement(".", 0, sa));
+				sentenceElement.appendChild(wordsContainer);
 
-				let createWordElement = function(w, a, s_weight) {
-					let wordElement = document.createElement("div");
-					wordElement.className = 'word';
-					wordElement.style.backgroundColor = 
-						getWordColorForActivation(s_weight*a)
-					wordElement.innerHTML = w;
-					return wordElement;
+				return sentenceElement;
+			};
+
+			let createWordElement = function (w, a, s_weight) {
+				let wordElement = document.createElement("div");
+				wordElement.className = "word";
+				wordElement.style.backgroundColor = getWordColorForActivation(
+					s_weight * a
+				);
+				wordElement.innerHTML = w;
+				return wordElement;
+			};
+
+			let renderActivationMap = function (data) {
+				activations = data.activations;
+				processed_text = data.processed_text;
+				const sentenceList = document.getElementById("sentence-list");
+				while (sentenceList.firstChild) {
+					sentenceList.removeChild(sentenceList.firstChild);
 				}
-
-				let renderActivationMap = function(data) {
-					activations = data.activations;
-					normalizedText = data.normalizedText;
-					const sentenceList = document.getElementById('sentence-list');
-					while (sentenceList.firstChild) {
-						sentenceList.removeChild(sentenceList.firstChild);
-					}
-					let predictionContainer = document.getElementById('prediction-container');
-					if (predictionContainer) {
-						predictionContainer.remove();
-					}
-					for (let i = 0; i < activations.length; i++) {
-						let s = activations[i];
-						let words = s[0];
-						let originalWords = normalizedText[i].split(' ');
-						let sa = s[1];
-						sentenceList.appendChild(createSentenceElement(sa, words, originalWords))
-					}
-
-					renderPrediction(data.prediction, data.binary);
+				let predictionContainer = document.getElementById(
+					"prediction-container"
+				);
+				if (predictionContainer) {
+					predictionContainer.remove();
 				}
-
-				let renderPrediction = function(prediction, binary) {
-					let predictionContainer = document.createElement("div");
-					predictionContainer.id = "prediction-container";
-					prediction = Math.round(prediction);
-					let predictionText = 'Predicted rating: ';
-					if (binary) {
-						let sentiment = 'Positive';
-						if (prediction == 0) {
-							sentiment = 'Negative';
-						}
-						predictionText += sentiment;
-					}
-					else {
-						predictionText += (prediction + 1) + ' out of 5 stars';
-					}
-					predictionContainer.innerHTML = predictionText;
-					document.getElementById("activation-map").appendChild(predictionContainer);
+				for (let i = 0; i < activations.length; i++) {
+					let s = activations[i];
+					let words = s[0];
+					let originalWords = processed_text[i].split(" ");
+					let sa = s[1];
+					sentenceList.appendChild(
+						createSentenceElement(sa, words, originalWords)
+					);
 				}
+				renderPrediction(data.prediction);
+			};
 
-			</script>
-		</footer>
-	</body>
+			let renderPrediction = function (prediction) {
+				let predictionContainer = document.createElement("div");
+				predictionContainer.id = "prediction-container";
+				prediction = Math.round(prediction);
+				let predictionText = "Predicted rating: ";
+				let sentiment = "Positive";
+				if (prediction == 0) {
+					sentiment = "Negative";
+				}
+				predictionText += sentiment;
+				predictionContainer.innerHTML = predictionText;
+				document
+					.getElementById("activation-map")
+					.appendChild(predictionContainer);
+			};
+
+		</script>
+	</footer>
+</body>
 
 </html>

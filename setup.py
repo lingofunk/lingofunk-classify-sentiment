@@ -17,7 +17,7 @@ def read(filename):
 
 
 setup(
-    name="lingofunk-classify-sentiment",
+    name="lingofunk_classify_sentiment",
     version="0.1.0",
     url="https://github.com/lingofunk/lingofunk-classify-sentiment",
     license="MIT",

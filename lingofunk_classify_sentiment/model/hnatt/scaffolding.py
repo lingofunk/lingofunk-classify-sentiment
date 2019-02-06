@@ -281,10 +281,8 @@ class HNATT:
 
     def classify(self, normalised_text):
         preds = self.predict([normalised_text])[0]
-        class_type = np.argmax(preds)
-        if class_type == 0:
-            return "neg"
-        return "pos"
+        class_type = np.argmax(preds).astype(float)
+        return class_type
 
     def activation_maps(self, text, websafe=False):
         normalized_text = normalize(text)
@@ -305,7 +303,7 @@ class HNATT:
         if websafe:
             u_wattention = u_wattention.astype(float)
 
-            # generate word, activation pairs
+        # generate word, activation pairs
         nopad_encoded_text = encoded_text[-len(normalized_text) :]
         nopad_encoded_text = [
             list(filter(lambda x: x > 0, sentence)) for sentence in nopad_encoded_text
@@ -328,7 +326,7 @@ class HNATT:
         for i, text in enumerate(reconstructed_texts):
             word_activation_maps.append(list(zip(text, nopad_wattention[i])))
 
-            # get sentence activations
+        # get sentence activations
         hidden_sentence_encoding_out = Model(
             inputs=self.model.input,
             outputs=self.model.get_layer("dense_transform_s").output,

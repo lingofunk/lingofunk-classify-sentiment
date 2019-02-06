@@ -8,7 +8,8 @@
       "weights": "assets/model/hnatt/weights.h5",
       "preprocessor": "assets/model/hnatt/preprocess.joblib",
       "tokenizer": "assets/model/hnatt/tokenize.pkl"
-    }
+    },
+    "current": "hnatt"
   },
   "datasets": {
     "yelp": {

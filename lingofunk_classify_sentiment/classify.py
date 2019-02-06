@@ -4,8 +4,8 @@ import sys
 import numpy as np
 
 import joblib
-from keras.models import load_model
-from keras.utils import CustomObjectScope
+from keras import backend as K
+import tensorflow as tf
 from lingofunk_classify_sentiment.config import config, fetch
 from lingofunk_classify_sentiment.model.hnatt.scaffolding import HNATT
 
@@ -22,16 +22,28 @@ class Classifier:
             self.model = joblib.load(weights_path, mmap_mode="r")
         elif extension in (".h5", ".hdf5"):
             if model_name == "hnatt":
+                K.clear_session()
                 h = HNATT()
                 h.load_weights(weights_path)
                 self.model = h
+                self.graph = tf.get_default_graph()
             else:
                 self.model = load_model(weights_path)
         print("Loading the preprocessing function...")
         self.preprocess = joblib.load(preprocessor_path)
 
+    def preprocess(self, text):
+        return self.preprocess(text)
+
     def classify(self, text):
-        return self.model.classify(self.preprocess(text))
+        with self.graph.as_default():
+            return self.model.classify(self.preprocess(text))
+
+    def activation_maps(self, text):
+        if self.model_name == "hnatt":
+            with self.graph.as_default():
+                return self.model.activation_maps(text, websafe=True)
+        return []
 
 
 def classify(argv):
