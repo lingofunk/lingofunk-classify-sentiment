@@ -19,6 +19,7 @@ tqdm = "*"
 tensorflow = "==1.7.0"
 h5py = "*"
 flask = "*"
+joblib = "*"
 
 [requires]
 python_version = "3.6"
