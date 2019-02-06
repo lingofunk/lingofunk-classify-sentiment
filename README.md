@@ -1,32 +1,10 @@
 lingofunk-classify-sentiment
 ============================
 
-![image](https://img.shields.io/pypi/v/lingofunk-classify-sentiment.svg%0A%20:target:%20https://pypi.python.org/pypi/lingofunk-classify-sentiment%0A%20:alt:%20Latest%20PyPI%20version)
-
-[![Latest Travis CI build status](-.png)](-)
-
 Yelp Review Sentiment Classifier
 
 Usage
 -----
-
-Installation
-------------
-
-### Requirements
-- [pyenv](https://github.com/pyenv/pyenv)
-- pipenv
-
-```shell
-pip install pipenv
-```
-### Setup
-
-```shell
-pyenv local $(cat .python-version)
-pipenv install --dev
-pipenv shell
-```
 
 #### Train a naive Bayes classifier
 
@@ -87,6 +65,25 @@ PYTHONPATH=. python -m lingofunk_classify_sentiment.classify naive_bayes "Hello,
 PYTHONPATH=. python -m lingofunk_classify_sentiment.classify hnatt "Hello, world!"
 ```
 
+
+Installation
+------------
+
+### Requirements
+- [pyenv](https://github.com/pyenv/pyenv)
+- pipenv
+
+```shell
+pip install pipenv
+```
+### Setup
+
+```shell
+pyenv local $(cat .python-version)
+pipenv install --dev
+pipenv shell
+```
+
 ### Utilities
 #### Extracting reviews from the Yelp dataset
 
@@ -98,12 +95,12 @@ For instance, to generate 1000 reviews on restaurants, execute the following:
 PYTHONPATH=. python -m lingofunk_classify_sentiment.data.extract_reviews Restaurants 1000
 ```
 
-
-Compatibility
--------------
-
 Licence
 -------
 
-Authors
--------
+MIT
+
+Resources
+---------
+
+  1. Minqi's HNAtt [Implementation](https://github.com/minqi/hnatt)
