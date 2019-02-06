@@ -13,7 +13,6 @@ class Server:
         self._classifier = classifier
 
         # routes
-        app.route("/")(self.index)
         app.route("/activations")(self.activations)
 
     def activations(self):
