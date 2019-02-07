@@ -25,6 +25,7 @@ from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
 # sess = tf_debug.LocalCLIDebugWrapperSession(sess)
 # K.set_session(sess)
 
+
 def dot_with_kernel(x, kernel):
     """
     Wrapper for dot product operation, in order to be compatible with both
@@ -34,10 +35,11 @@ def dot_with_kernel(x, kernel):
         kernel (): weights
     Returns:
     """
-    if K.backend() == 'tensorflow':
+    if K.backend() == "tensorflow":
         return K.squeeze(K.dot(x, K.expand_dims(kernel)), axis=-1)
     else:
         return K.dot(x, kernel)
+
 
 class Attention(Layer):
     def __init__(
@@ -324,6 +326,10 @@ class HNATT:
         class_type = np.argmax(preds).astype(float)
         return class_type
 
+    def prob_classify(self, normalised_text):
+        preds = self.predict([normalised_text])[0]
+        return np.max(preds)
+
     def activation_maps(self, text, websafe=False):
         normalized_text = normalize(text)
         encoded_text = self._encode_input(text)[0]
@@ -375,9 +381,7 @@ class HNATT:
             hidden_sentence_encoding_out.predict(np.expand_dims(encoded_text, 0)), 0
         )
         sentence_context = self.model.get_layer("sentence_attention").get_weights()[0]
-        u_sattention = np.exp(
-            np.dot(hidden_sentence_encodings, sentence_context)
-        )
+        u_sattention = np.exp(np.dot(hidden_sentence_encodings, sentence_context))
         if websafe:
             u_sattention = u_sattention.astype(float)
         nopad_sattention = u_sattention[-len(normalized_text) :]

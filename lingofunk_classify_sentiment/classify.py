@@ -2,10 +2,11 @@ import os
 import sys
 
 import numpy as np
+import tensorflow as tf
 
 import joblib
 from keras import backend as K
-import tensorflow as tf
+from keras.models import load_model
 from lingofunk_classify_sentiment.config import config, fetch
 from lingofunk_classify_sentiment.model.hnatt.scaffolding import HNATT
 
@@ -30,14 +31,25 @@ class Classifier:
             else:
                 self.model = load_model(weights_path)
         print("Loading the preprocessing function...")
-        self.preprocess = joblib.load(preprocessor_path)
+        self.feed_preprocessor = joblib.load(preprocessor_path)
 
     def preprocess(self, text):
-        return self.preprocess(text)
+        return self.feed_preprocessor(text)
 
     def classify(self, text):
-        with self.graph.as_default():
+        if self.model_name == "hnatt":
+            with self.graph.as_default():
+                return self.model.classify(self.preprocess(text))
+        else:
             return self.model.classify(self.preprocess(text))
+
+    def prob_classify(self, text):
+        if self.model_name == "hnatt":
+            with self.graph.as_default():
+                return self.model.prob_classify(self.preprocess(text))
+        else:
+            dist = self.model.prob_classify(self.preprocess(text))
+            return dist.prob(self.classify(text))
 
     def activation_maps(self, text):
         if self.model_name == "hnatt":
