@@ -25,35 +25,89 @@ from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
 # sess = tf_debug.LocalCLIDebugWrapperSession(sess)
 # K.set_session(sess)
 
+def dot_with_kernel(x, kernel):
+    """
+    Wrapper for dot product operation, in order to be compatible with both
+    Theano and Tensorflow
+    Args:
+        x (): input
+        kernel (): weights
+    Returns:
+    """
+    if K.backend() == 'tensorflow':
+        return K.squeeze(K.dot(x, K.expand_dims(kernel)), axis=-1)
+    else:
+        return K.dot(x, kernel)
 
 class Attention(Layer):
-    def __init__(self, regularizer=None, **kwargs):
+    def __init__(
+        self,
+        has_bias=True,
+        embedding_regularizer="l2",
+        context_regularizer="l2",
+        bias_regularizer="l2",
+        regularizer=None,
+        **kwargs
+    ):
         super(Attention, self).__init__(**kwargs)
+        self.initializer = initializers.get("glorot_uniform")
+        self.embedding_regularizer = regularizers.get(embedding_regularizer)
+        self.context_regularizer = regularizers.get(context_regularizer)
+        self.bias_regularizer = regularizers.get(bias_regularizer)
         self.regularizer = regularizer
         self.supports_masking = True
+        self.has_bias = has_bias
+        self.bias = None
 
     def build(self, input_shape):
         # Create a trainable weight variable for this layer.
         self.context = self.add_weight(
             name="context",
-            shape=(input_shape[-1], 1),
-            initializer=initializers.RandomNormal(mean=0.0, stddev=0.05, seed=None),
-            regularizer=self.regularizer,
+            shape=(input_shape[-1],),
+            initializer=self.initializer,
+            regularizer=self.context_regularizer,
             trainable=True,
+        )
+        if self.has_bias:
+            self.bias = self.add_weight(
+                name="bias",
+                shape=(input_shape[-1],),
+                initializer=initializers.get("zeros"),
+                regularizer=self.bias_regularizer,
+                trainable=True,
+            )
+        self.embedding = self.add_weight(
+            (input_shape[-1], input_shape[-1]),
+            initializer=self.initializer,
+            name="embedding",
+            regularizer=self.embedding_regularizer,
         )
         super(Attention, self).build(input_shape)
 
     def call(self, x, mask=None):
-        attention_in = K.exp(K.squeeze(K.dot(x, self.context), axis=-1))
-        attention = attention_in / K.expand_dims(K.sum(attention_in, axis=-1), -1)
+        uit = dot_with_kernel(x, self.embedding)
 
+        if self.has_bias:
+            uit += self.bias
+
+        uit = K.tanh(uit)
+        ait = dot_with_kernel(uit, self.context)
+
+        a = K.exp(ait)
+
+        # apply mask after the exp. will be re-normalized next
         if mask is not None:
-            # use only the inputs specified by the mask
-            # import pdb; pdb.set_trace()
-            attention = attention * K.cast(mask, "float32")
+            # Cast the mask to floatX to avoid float64 upcasting in theano
+            a *= K.cast(mask, K.floatx())
 
-        weighted_sum = K.batch_dot(K.permute_dimensions(x, [0, 2, 1]), attention)
-        return weighted_sum
+        # in some cases especially in the early stages of training the sum may be almost zero
+        # and this results in NaN's. A workaround is to add a very small positive number ε to the sum.
+        # a /= K.cast(K.sum(a, axis=1, keepdims=True), K.floatx())
+        a /= K.cast(K.sum(a, axis=1, keepdims=True) + K.epsilon(), K.floatx())
+
+        a = K.expand_dims(a)
+        weighted_input = x * a
+        return K.sum(weighted_input, axis=1)
 
     def compute_output_shape(self, input_shape):
         print(input_shape)
@@ -322,7 +376,7 @@ class HNATT:
         )
         sentence_context = self.model.get_layer("sentence_attention").get_weights()[0]
         u_sattention = np.exp(
-            np.squeeze(np.dot(hidden_sentence_encodings, sentence_context), -1)
+            np.dot(hidden_sentence_encodings, sentence_context)
         )
         if websafe:
             u_sattention = u_sattention.astype(float)
