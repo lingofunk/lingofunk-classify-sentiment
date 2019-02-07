@@ -259,7 +259,7 @@ class HNATT:
         self,
         train_x,
         train_y,
-        batch_size=16,
+        batch_size=32,
         epochs=1,
         embedding_dim=300,
         embeddings_path=False,
