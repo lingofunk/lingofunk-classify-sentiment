@@ -96,17 +96,10 @@ class HNATT:
             name="word_embeddings",
         )(sentence_in)
         word_encoder = Bidirectional(
-            GRU(
-                self.MAX_SENTENCE_LENGTH,
-                return_sequences=True,
-                kernel_regularizer=l2_reg,
-            )
+            GRU(50, return_sequences=True, kernel_regularizer=l2_reg)
         )(embedded_word_seq)
         dense_transform_w = Dense(
-            embedding_dim,
-            activation="relu",
-            name="dense_transform_w",
-            kernel_regularizer=l2_reg,
+            100, activation="relu", name="dense_transform_w", kernel_regularizer=l2_reg
         )(word_encoder)
         attention_weighted_sentence = Model(
             sentence_in,
@@ -123,17 +116,10 @@ class HNATT:
             texts_in
         )
         sentence_encoder = Bidirectional(
-            GRU(
-                self.MAX_SENTENCE_LENGTH,
-                return_sequences=True,
-                kernel_regularizer=l2_reg,
-            )
+            GRU(50, return_sequences=True, kernel_regularizer=l2_reg)
         )(attention_weighted_sentences)
         dense_transform_s = Dense(
-            embedding_dim,
-            activation="relu",
-            name="dense_transform_s",
-            kernel_regularizer=l2_reg,
+            100, activation="relu", name="dense_transform_s", kernel_regularizer=l2_reg
         )(sentence_encoder)
         attention_weighted_text = Attention(
             name="sentence_attention", regularizer=l2_reg
