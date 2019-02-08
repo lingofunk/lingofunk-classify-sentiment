@@ -151,9 +151,12 @@ class HNATT:
             mask_zero=True,
             name="word_embeddings",
         )(sentence_in)
+        normalised_embedding = Lambda(lambda x: K.l2_normalize(x, axis=1))(
+            embedded_word_seq
+        )
         word_encoder = Bidirectional(
             GRU(50, return_sequences=True, kernel_regularizer=l2_reg)
-        )(embedded_word_seq)
+        )(normalised_embedding)
         dense_transform_w = Dense(
             100, activation="relu", name="dense_transform_w", kernel_regularizer=l2_reg
         )(word_encoder)
