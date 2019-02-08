@@ -137,4 +137,8 @@ lingofunk_classify_sentiment/assets/data/*.json
 lingofunk_classify_sentiment/assets/model/hnatt/*
 lingofunk_classify_sentiment/assets/embedding/*
 
+# backups
+
+*.old
+
 # End of https://www.gitignore.io/api/python,visualstudiocode
