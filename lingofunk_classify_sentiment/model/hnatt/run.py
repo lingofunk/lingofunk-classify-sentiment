@@ -5,7 +5,7 @@ import joblib
 from lingofunk_classify_sentiment.config import config, fetch
 from lingofunk_classify_sentiment.data.download_data import download_embedding
 from lingofunk_classify_sentiment.data.load import (
-    load_balanced_train_and_test_dataframes
+    load_balanced_train_and_test_dataframes,
 )
 from lingofunk_classify_sentiment.data.extract_reviews import save_reviews
 from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
@@ -33,6 +33,10 @@ def main(argv):
             download_embedding(embeddings_name)
 
     preprocessor_path = fetch(config["models"]["hnatt"]["preprocessor"])
+    preprocessor_dir = os.path.dirname(preprocessor_path)
+    if not os.path.exists(preprocessor_dir):
+        os.makedirs(preprocessor_dir)
+
     joblib.dump(normalize, preprocessor_path, compress=0)
 
     (train_X, train_y), (test_X, test_y) = load_balanced_train_and_test_dataframes(
