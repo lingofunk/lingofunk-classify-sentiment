@@ -147,6 +147,7 @@ class HNATT:
             embedding_dim,
             weights=[embedding_weights],
             input_length=self.MAX_SENTENCE_LENGTH,
+            trainable=False,
             mask_zero=True,
             name="word_embeddings",
         )(sentence_in)
