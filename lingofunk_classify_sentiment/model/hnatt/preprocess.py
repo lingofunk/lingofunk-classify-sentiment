@@ -1,6 +1,7 @@
 import string
 from spacy.lang.en import English
-from spacy.lang.en.stop_words import STOP_WORDS
+
+STOP_WORDS = ["the", "a", "an"]
 
 nlp = English()
 nlp.add_pipe(nlp.create_pipe("sentencizer"))
