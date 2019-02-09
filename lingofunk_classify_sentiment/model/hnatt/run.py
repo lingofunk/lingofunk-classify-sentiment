@@ -45,7 +45,7 @@ def main(argv):
 
     # initialize HNATT
     h = HNATT()
-    h.train(train_X, train_y, batch_size=1024, epochs=16, embeddings_path=embeddings_path)
+    h.train(train_X, train_y, batch_size=256, epochs=16, embeddings_path=embeddings_path)
 
     h.load_weights()
 
