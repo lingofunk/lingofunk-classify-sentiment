@@ -1,8 +1,8 @@
 import json
 
 CITY = 'Toronto'
-business_input = open('business.json', 'r', encoding='utf-8')
-reviews_input = open('dataset.json', 'r', encoding='utf-8')
+business_input = open('yelp_academic_dataset_business.json', 'r', encoding='utf-8')
+reviews_input = open('yelp_academic_dataset_review.json', 'r', encoding='utf-8')
 output = open(CITY + '_dataset.json', 'w', encoding='utf-8')
 
 if __name__ == '__main__':
