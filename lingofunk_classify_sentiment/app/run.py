@@ -55,14 +55,13 @@ def load_args():
         default=8000,
         help="The port to listen to (the default is 8000).",
     )
-    parser.add_argument("--model", type=str, default=config["models"]["current"])
     return parser.parse_args()
 
 
 def run():
     args = load_args()
     app = Flask(__name__)
-    classifier = Classifier(args.model)
+    classifier = Classifier()
     server = Server(app, classifier, args.port)
     server.serve()
 
