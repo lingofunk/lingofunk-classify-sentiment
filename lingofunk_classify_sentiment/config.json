@@ -5,9 +5,9 @@
       "preprocessor": "assets/model/naive_bayes/preprocess.joblib"
     },
     "hnatt": {
-      "weights": "assets/model/hnatt/weights.h5",
+      "weights": "assets/model/hnatt/weights_${quantity}_${tag}.h5",
       "preprocessor": "assets/model/hnatt/preprocess.joblib",
-      "tokenizer": "assets/model/hnatt/tokenize.pkl"
+      "tokenizer": "assets/model/hnatt/tokenize_${quantity}_${tag}.pkl"
     },
     "current": "hnatt"
   },

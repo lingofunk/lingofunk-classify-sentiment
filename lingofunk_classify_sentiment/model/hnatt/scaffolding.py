@@ -1,10 +1,11 @@
 import datetime
 import os
 import pickle
-
-import numpy as np
+from datetime import date
+from string import Template
 
 import keras
+import numpy as np
 from keras import backend as K
 from keras import initializers, regularizers
 from keras.callbacks import *
@@ -15,9 +16,13 @@ from keras.optimizers import *
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import CustomObjectScope
+
 from lingofunk_classify_sentiment.config import config, fetch
 from lingofunk_classify_sentiment.data.load import load_glove_embedding
 from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
+
+WEIGHTS_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["weights"]))
+TOKENIZER_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["tokenizer"]))
 
 # Uncomment below for debugging
 # from tensorflow.python import debug as tf_debug
@@ -196,11 +201,10 @@ class HNATT:
 
         return model
 
-    def load_weights(self, weights_path=fetch(config["models"]["hnatt"]["weights"])):
+    def load_weights(self, weights_path, tokenizer_path):
         with CustomObjectScope({"Attention": Attention}):
             self.model = load_model(weights_path)
             self.word_attention_model = self.model.get_layer("time_distributed_1").layer
-            tokenizer_path = fetch(config["models"]["hnatt"]["tokenizer"])
             tokenizer_state = pickle.load(open(tokenizer_path, "rb"))
             self.tokenizer = tokenizer_state["tokenizer"]
             self.MAX_SENTENCE_COUNT = tokenizer_state["maxSentenceCount"]
@@ -266,6 +270,8 @@ class HNATT:
         epochs=1,
         embedding_dim=300,
         embeddings_path=False,
+        weights_path_template=WEIGHTS_PATH_TEMPLATE,
+        tokenizer_path_template=TOKENIZER_PATH_TEMPLATE,
     ):
         # fit tokenizer
         self._fit_on_texts(train_x)
@@ -275,6 +281,10 @@ class HNATT:
             embeddings_path=embeddings_path,
         )
         encoded_train_x = self._encode_texts(train_x)
+        quantity = len(train_y)
+        tag = str(date.today())
+        tokenizer_path = tokenizer_path_template.substitute(quantity=quantity, tag=tag)
+        weights_path = weights_path_template.substitute(quantity=quantity, tag=tag)
         callbacks = [
             # EarlyStopping(
             # 	monitor='acc',
@@ -289,19 +299,17 @@ class HNATT:
             # )
             LambdaCallback(
                 on_epoch_end=lambda epoch, logs: self._save_tokenizer_on_epoch_end(
-                    fetch(config["models"]["hnatt"]["tokenizer"]), epoch
+                    tokenizer_path, epoch
                 )
             ),
-        ]
-
-        callbacks.append(
             ModelCheckpoint(
-                filepath=fetch(config["models"]["hnatt"]["weights"]),
+                filepath=weights_path,
                 monitor="val_acc",
                 save_best_only=True,
                 save_weights_only=False,
-            )
-        )
+            ),
+        ]
+
         self.model.fit(
             x=encoded_train_x,
             y=train_y,
