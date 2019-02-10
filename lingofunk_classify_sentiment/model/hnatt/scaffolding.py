@@ -24,6 +24,7 @@ from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
 WEIGHTS_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["weights"]))
 TOKENIZER_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["tokenizer"]))
 MAX_VOCABULARY_SIZE = 80000
+INPUT_SIZE = 60
 
 # Uncomment below for debugging
 # from tensorflow.python import debug as tf_debug
@@ -162,10 +163,13 @@ class HNATT:
             embedded_word_seq
         )
         word_encoder = Bidirectional(
-            GRU(30, return_sequences=True, kernel_regularizer=l2_reg)
+            GRU(INPUT_SIZE, return_sequences=True, kernel_regularizer=l2_reg)
         )(normalised_embedding)
         dense_transform_w = Dense(
-            60, activation="relu", name="dense_transform_w", kernel_regularizer=l2_reg
+            2 * INPUT_SIZE,
+            activation="relu",
+            name="dense_transform_w",
+            kernel_regularizer=l2_reg,
         )(word_encoder)
         attention_weighted_sentence = Model(
             sentence_in,
@@ -182,10 +186,13 @@ class HNATT:
             texts_in
         )
         sentence_encoder = Bidirectional(
-            GRU(30, return_sequences=True, kernel_regularizer=l2_reg)
+            GRU(INPUT_SIZE, return_sequences=True, kernel_regularizer=l2_reg)
         )(attention_weighted_sentences)
         dense_transform_s = Dense(
-            60, activation="relu", name="dense_transform_s", kernel_regularizer=l2_reg
+            2 * INPUT_SIZE,
+            activation="relu",
+            name="dense_transform_s",
+            kernel_regularizer=l2_reg,
         )(sentence_encoder)
         attention_weighted_text = Attention(
             name="sentence_attention", regularizer=l2_reg
@@ -195,8 +202,8 @@ class HNATT:
         model.summary()
 
         model.compile(  # optimizer=RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0),
-            # optimizer=SGD(lr=0.01, decay=1e-6, nesterov=True),
-            optimizer=Adam(lr=0.0002),
+            optimizer=SGD(lr=0.01, decay=1e-6, nesterov=True),
+            # optimizer=Adam(lr=0.001),
             loss="categorical_crossentropy",
             metrics=["acc"],
         )
