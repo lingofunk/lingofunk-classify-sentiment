@@ -23,8 +23,9 @@ from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
 
 WEIGHTS_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["weights"]))
 TOKENIZER_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["tokenizer"]))
-MAX_VOCABULARY_SIZE = 80000
-INPUT_SIZE = 60
+MAX_VOCABULARY_SIZE = config["constants"]["max_vocabulary_size"]
+INPUT_SIZE = config["constants"]["input_size"]
+LEARNING_RATE = config["constants"]["learning_rate"]
 
 # Uncomment below for debugging
 # from tensorflow.python import debug as tf_debug
@@ -137,7 +138,14 @@ class HNATT:
     def _generate_embedding(self, path, dim):
         return load_glove_embedding(path, dim, self.tokenizer.word_index)
 
-    def _build_model(self, n_classes=2, embedding_dim=300, embeddings_path=False):
+    def _build_model(
+        self,
+        n_classes=2,
+        embedding_dim=300,
+        embeddings_path=False,
+        input_size=INPUT_SIZE,
+        learning_rate=LEARNING_RATE,
+    ):
         l2_reg = regularizers.l2(1e-8)
         # embedding_weights = np.random.normal(0, 1, (len(self.tokenizer.word_index) + 1, embedding_dim))
         # embedding_weights = np.zeros((len(self.tokenizer.word_index) + 1, embedding_dim))
@@ -163,10 +171,10 @@ class HNATT:
             embedded_word_seq
         )
         word_encoder = Bidirectional(
-            GRU(INPUT_SIZE, return_sequences=True, kernel_regularizer=l2_reg)
+            GRU(input_size, return_sequences=True, kernel_regularizer=l2_reg)
         )(normalised_embedding)
         dense_transform_w = Dense(
-            2 * INPUT_SIZE,
+            2 * input_size,
             activation="relu",
             name="dense_transform_w",
             kernel_regularizer=l2_reg,
@@ -186,10 +194,10 @@ class HNATT:
             texts_in
         )
         sentence_encoder = Bidirectional(
-            GRU(INPUT_SIZE, return_sequences=True, kernel_regularizer=l2_reg)
+            GRU(input_size, return_sequences=True, kernel_regularizer=l2_reg)
         )(attention_weighted_sentences)
         dense_transform_s = Dense(
-            2 * INPUT_SIZE,
+            2 * input_size,
             activation="relu",
             name="dense_transform_s",
             kernel_regularizer=l2_reg,
@@ -201,9 +209,10 @@ class HNATT:
         model = Model(texts_in, prediction)
         model.summary()
 
-        model.compile(  # optimizer=RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0),
-            optimizer=SGD(lr=0.01, decay=1e-6, nesterov=True),
-            # optimizer=Adam(lr=0.001),
+        model.compile(
+            optimizer=Adam(lr=learning_rate),
+            # optimizer=RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0),
+            # optimizer=SGD(lr=0.01, decay=1e-6, nesterov=True),
             loss="categorical_crossentropy",
             metrics=["acc"],
         )
@@ -304,6 +313,8 @@ class HNATT:
         embeddings_path=False,
         weights_path_template=WEIGHTS_PATH_TEMPLATE,
         tokenizer_path_template=TOKENIZER_PATH_TEMPLATE,
+        input_size=INPUT_SIZE,
+        learning_rate=LEARNING_RATE,
     ):
         # fit tokenizer
         self._fit_on_texts(train_x)
@@ -311,10 +322,14 @@ class HNATT:
             n_classes=train_y.shape[-1],
             embedding_dim=embedding_dim,
             embeddings_path=embeddings_path,
+            input_size=input_size,
         )
         encoded_train_x = self._encode_texts(train_x)
         quantity = len(train_y)
-        tag = str(date.today())
+        tag = (
+            f"{date.today()}_input_size_{input_size}_lr_{learning_rate}_"
+            + "epoch_{epoch:02d}_loss_{val_loss:.2f}_acc_{val_acc:.2f}"
+        )
         tokenizer_path = tokenizer_path_template.substitute(quantity=quantity, tag=tag)
         weights_path = weights_path_template.substitute(quantity=quantity, tag=tag)
         callbacks = [

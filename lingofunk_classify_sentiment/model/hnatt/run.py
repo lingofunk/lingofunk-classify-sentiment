@@ -16,27 +16,36 @@ from lingofunk_classify_sentiment.model.hnatt.scaffolding import HNATT
 
 WEIGHTS_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["weights"]))
 TOKENIZER_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["tokenizer"]))
+LEARNING_RATE = float(config["constants"]["learning_rate"])
+INPUT_SIZE = int(config["constants"]["input_size"])
 
 
 def main(argv):
-    if len(argv) not in [2, 3]:
+    if len(argv) not in range(2, 6):
         programme_name = "lingofunk_classify_sentiment.model.hnatt.run"
         print(
-            f"usage: PYTHONPATH=. python -m {programme_name} <category> <quantity>"
-            " <embedding_name>"
+            f"usage: PYTHONPATH=. python -m {programme_name} "
+            "<category> <quantity> <embedding_name> <input_size> "
+            "<learning rate>"
         )
         sys.exit(2)
     category = argv[0]
     quantity = int(argv[1])
 
     embeddings_path = None
-    if len(argv) == 3:
+    if len(argv) >= 3:
         embeddings_name = argv[2]
         embeddings_path = fetch(
             f'{config["embeddings"][embeddings_name]["basepath"]}.txt'
         )
         if not os.path.isfile(embeddings_path):
             download_embedding(embeddings_name)
+
+    if len(argv) >= 4:
+        input_size = int(argv[3])
+
+    if len(argv) == 5:
+        learning_rate = float(argv[4])
 
     preprocessor_path = fetch(config["models"]["hnatt"]["preprocessor"])
     preprocessor_dir = os.path.dirname(preprocessor_path)
@@ -52,7 +61,13 @@ def main(argv):
     # initialize HNATT
     h = HNATT()
     h.train(
-        train_X, train_y, batch_size=64, epochs=10, embeddings_path=embeddings_path
+        train_X,
+        train_y,
+        batch_size=64,
+        epochs=10,
+        embeddings_path=embeddings_path,
+        input_size=input_size,
+        learning_rate=learning_rate,
     )
     quantity = len(train_y)
     tag = str(date.today())

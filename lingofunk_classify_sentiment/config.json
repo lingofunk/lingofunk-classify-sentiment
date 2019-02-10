@@ -1,36 +1,41 @@
 {
-	"models": {
-		"current": {
-			"name": "hnatt",
-			"weights": "assets/model/hnatt/weights.h5",
-			"preprocessor": "assets/model/hnatt/preprocess.joblib",
-			"tokenizer": "assets/model/hnatt/tokenize.pkl"
-		},
-		"naive_bayes": {
-			"weights": "assets/model/naive_bayes/weights.joblib",
-			"preprocessor": "assets/model/naive_bayes/preprocess.joblib"
-		},
-		"hnatt": {
-			"weights": "assets/model/hnatt/weights_${quantity}_${tag}.h5",
-			"preprocessor": "assets/model/hnatt/preprocess.joblib",
-			"tokenizer": "assets/model/hnatt/tokenize_${quantity}_${tag}.pkl"
-		}
-	},
-	"datasets": {
-		"yelp": {
-			"ids": "assets/data/business.json",
-			"reviews": "assets/data/review.json",
-			"sample_format": "assets/data/yelp_${category}_reviews_${quantity}_${label}.json"
-		},
-		"yelp_restaurants": {
-			"ids": "assets/data/restaurants.csv",
-			"reviews": "assets/data/restaurant_reviews.csv"
-		}
-	},
-	"embeddings": {
-		"glove-840B-300d": {
-			"basepath": "assets/embedding/glove.840B.300d",
-			"url": "http://nlp.stanford.edu/data/glove.840B.300d.zip"
-		}
-	}
+  "models": {
+    "current": {
+      "name": "hnatt",
+      "weights": "assets/model/hnatt/weights.h5",
+      "preprocessor": "assets/model/hnatt/preprocess.joblib",
+      "tokenizer": "assets/model/hnatt/tokenize.pkl"
+    },
+    "naive_bayes": {
+      "weights": "assets/model/naive_bayes/weights.joblib",
+      "preprocessor": "assets/model/naive_bayes/preprocess.joblib"
+    },
+    "hnatt": {
+      "weights": "assets/model/hnatt/weights_${quantity}_${tag}.h5",
+      "preprocessor": "assets/model/hnatt/preprocess.joblib",
+      "tokenizer": "assets/model/hnatt/tokenize_${quantity}_${tag}.pkl"
+    }
+  },
+  "datasets": {
+    "yelp": {
+      "ids": "assets/data/business.json",
+      "reviews": "assets/data/review.json",
+      "sample_format": "assets/data/yelp_${category}_reviews_${quantity}_${label}.json"
+    },
+    "yelp_restaurants": {
+      "ids": "assets/data/restaurants.csv",
+      "reviews": "assets/data/restaurant_reviews.csv"
+    }
+  },
+  "embeddings": {
+    "glove-840B-300d": {
+      "basepath": "assets/embedding/glove.840B.300d",
+      "url": "http://nlp.stanford.edu/data/glove.840B.300d.zip"
+    }
+  },
+  "constants": {
+    "learning_rate": 0.001,
+    "input_size": 50,
+    "max_vocabulary_size": 85000
+  }
 }
