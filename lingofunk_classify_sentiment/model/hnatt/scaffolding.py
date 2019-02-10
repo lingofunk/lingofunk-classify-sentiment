@@ -196,7 +196,7 @@ class HNATT:
 
         model.compile(  # optimizer=RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0),
             # optimizer=SGD(lr=0.01, decay=1e-6, nesterov=True),
-            optimizer=Adam(lr=0.001),
+            optimizer=Adam(lr=0.0002),
             loss="categorical_crossentropy",
             metrics=["acc"],
         )
