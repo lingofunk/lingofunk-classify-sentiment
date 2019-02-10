@@ -54,7 +54,7 @@ class Attention(Layer):
         context_regularizer="l2",
         bias_regularizer="l2",
         regularizer=None,
-        **kwargs
+        **kwargs,
     ):
         super(Attention, self).__init__(**kwargs)
         self.initializer = initializers.get("glorot_uniform")
@@ -156,6 +156,7 @@ class HNATT:
             mask_zero=True,
             name="word_embeddings",
         )(sentence_in)
+        print(f"The vocabulary size is {self.VOCABULARY_SIZE}.")
         normalised_embedding = Lambda(lambda x: K.l2_normalize(x, axis=-1))(
             embedded_word_seq
         )
@@ -213,7 +214,9 @@ class HNATT:
             self._create_reverse_word_index()
 
     def _fit_on_texts(self, texts):
-        self.tokenizer = Tokenizer(filters='"()*,-/;[\]^_`{|}~', oov_token="UNK")
+        self.tokenizer = Tokenizer(
+            filters='"()*,-/;[\]^_`{|}~', oov_token="UNK", num_words=80000
+        )
         all_sentences = []
         max_sentence_count = 0
         max_sentence_length = 0
