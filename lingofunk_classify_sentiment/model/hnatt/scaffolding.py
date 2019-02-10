@@ -23,6 +23,7 @@ from lingofunk_classify_sentiment.model.hnatt.preprocess import normalize
 
 WEIGHTS_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["weights"]))
 TOKENIZER_PATH_TEMPLATE = Template(fetch(config["models"]["hnatt"]["tokenizer"]))
+MAX_VOCABULARY_SIZE = 80000
 
 # Uncomment below for debugging
 # from tensorflow.python import debug as tf_debug
@@ -213,9 +214,29 @@ class HNATT:
             self.VOCABULARY_SIZE = tokenizer_state["vocabularySize"]
             self._create_reverse_word_index()
 
+    def reduced_word_index(self, word_counts):
+        return dict(
+            list(
+                zip(
+                    *(
+                        list(
+                            zip(
+                                *sorted(
+                                    word_counts.items(),
+                                    key=lambda x: x[1],
+                                    reverse=True,
+                                )
+                            )
+                        )[0][:MAX_VOCABULARY_SIZE],
+                        tuple(np.arange(1, MAX_VOCABULARY_SIZE + 1)),
+                    )
+                )
+            )
+        )
+
     def _fit_on_texts(self, texts):
         self.tokenizer = Tokenizer(
-            filters='"()*,-/;[\]^_`{|}~', oov_token="UNK", num_words=80000
+            filters='"()*,-/;[\]^_`{|}~', oov_token="UNK", num_words=MAX_VOCABULARY_SIZE
         )
         all_sentences = []
         max_sentence_count = 0
@@ -233,6 +254,7 @@ class HNATT:
         self.MAX_SENTENCE_COUNT = min(max_sentence_count, 20)
         self.MAX_SENTENCE_LENGTH = min(max_sentence_length, 50)
         self.tokenizer.fit_on_texts(all_sentences)
+        self.tokenizer.word_index = self.reduced_word_index(self.tokenizer.word_counts)
         self.VOCABULARY_SIZE = len(self.tokenizer.word_index) + 1
         self._create_reverse_word_index()
 
