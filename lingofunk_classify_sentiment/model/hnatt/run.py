@@ -52,7 +52,7 @@ def main(argv):
     # initialize HNATT
     h = HNATT()
     h.train(
-        train_X, train_y, batch_size=64, epochs=16, embeddings_path=embeddings_path
+        train_X, train_y, batch_size=64, epochs=10, embeddings_path=embeddings_path
     )
     quantity = len(train_y)
     tag = str(date.today())
