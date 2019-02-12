@@ -56,7 +56,8 @@ class Server:
                 return Response(status=400)
 
             histogram = self._analyst.get_histogram_for_restaurant_name(business_id).tolist()
-            return jsonify(histogram=histogram)
+            avg_sentiment = self._analyst.get_avg_sentiment_for_restaurant_name(business_id)
+            return jsonify(histogram=histogram, avg_sentiment=avg_sentiment)
         else:
             return Response(status=501)
 
@@ -78,8 +79,8 @@ def load_args():
 def run():
     args = load_args()
     app = Flask(__name__)
-    classifier = Classifier()
-    server = Server(app, classifier, args.port)
+    analyst = CitySentimentAnalyst()
+    server = Server(app, analyst, args.port)
     server.serve()
 
 

@@ -34,7 +34,7 @@ class CitySentimentAnalyst:
 
         self.n_bins = n_bins
 
-        self.sentiments = self.__init_sentiments__()
+        self.sentiments, self.histogram = self.__init_sentiments__()
 
     @classmethod
     def compute_sentiments(cls):
@@ -48,18 +48,24 @@ class CitySentimentAnalyst:
         return int_x
 
     def __init_sentiments__(self):
-        sentiments = np.zeros(shape=(self.n_restaurants, self.n_bins))
+        histogram = np.zeros(shape=(self.n_restaurants, self.n_bins))
+        sentiments = np.zeros(shape=(self.n_restaurants,))
         for i in range(self.n_restaurants):
             for review in self.restaurant_reviews[i]:
                 prediction = self.classifier.classify(review)
-                sentiments[i][self.calculate_bin(prediction)] += 1
-        return sentiments
+                sentiments[i] += prediction
+                histogram[i][self.calculate_bin(prediction)] += 1
+            sentiments[i] /= self.lens_restaurants[i]
+        return sentiments, histogram
 
     def get_histogram_for_restaurant_id(self, i):
-        return self.sentiments[i] / sum(self.sentiments[i])
+        return self.histogram[i] / sum(self.histogram[i])
 
     def get_histogram_for_restaurant_name(self, rest):
         return self.get_histogram_for_restaurant_id(self.rest2id[rest])
+
+    def get_avg_sentiment_for_restaurant_name(self, rest):
+        return self.sentiments[self.rest2id[rest]]
 
 
 if __name__ == "__main__":
